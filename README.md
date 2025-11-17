@@ -7,9 +7,11 @@ A high-performance data engineering project for classifying Points of Interest (
 - ✅ **Enhanced Classification**: Expanded from 4 to 7 categories for better granularity
 - ✅ **Performance Optimized**: 120K+ records/second processing speed using set-based lookups
 - ✅ **100% Coverage**: Comprehensive Japanese POI dataset support (1M+ records)
+- ✅ **Environment Classifier**: NEW - Classify coordinates as urban/suburban/rural based on POI analysis
 - ✅ **Large Dataset Support**: Updated Jupyter notebook with batch processing capabilities
 - ✅ **New Categories**: Added Residential and Infrastructure classification
 - ✅ **Extensive POI Types**: 200+ POI type combinations supported
+- ✅ **Command-line Tools**: Flexible demo.py with file input arguments
 
 ## Project Structure
 
@@ -25,6 +27,7 @@ working-space-moving-walls/
 ├── src/
 │   ├── __init__.py
 │   └── poi_classifier.py             # Optimized classification module
+├── classify_environment.py           # Environment classifier (urban/suburban/rural)
 ├── demo.py                           # Quick demonstration script
 ├── verify_setup.py                   # Setup verification script
 ├── test_classifier_performance.py    # Performance testing script
@@ -40,7 +43,20 @@ working-space-moving-walls/
 pip install -r requirements.txt
 ```
 
-### 2. Run the Jupyter Notebook
+### 2. Classify Environment from Coordinates
+
+```bash
+# Classify environment at specific coordinates
+python classify_environment.py 24.4519 122.9440
+
+# Use custom radius (in kilometers)
+python classify_environment.py 24.4519 122.9440 2.0
+
+# Specify custom data file
+python classify_environment.py 24.4519 122.9440 1.0 data/cleaned_JP_POI_part1.csv
+```
+
+### 3. Run the Jupyter Notebook
 
 ```bash
 cd notebooks
@@ -202,11 +218,61 @@ Estimated full dataset processing time: 8.4 seconds (0.1 minutes)
 - ✅ **7 comprehensive categories** with 200+ POI type combinations
 - ✅ **High-performance classification** (120K+ records/sec)
 - ✅ **100% coverage** on Japanese POI datasets
+- ✅ **Environment classification** - Classify coordinates as urban/suburban/rural
 - ✅ **Large dataset support** in Jupyter notebook
 - ✅ **Extensible design** - Easy to add new categories or POI types
 - ✅ **Multiple testing scripts** (demo, verify, performance test)
 - ✅ **Reusable module** for integration into other projects
 - ✅ **Detailed documentation** and examples
+
+## Environment Classification
+
+The project includes a powerful environment classification tool that analyzes POI density and characteristics around given coordinates to determine if an area is urban, suburban, or rural.
+
+### Usage
+
+```bash
+python classify_environment.py <latitude> <longitude> [radius_km]
+```
+
+### Examples
+
+```bash
+# Urban area (high POI density)
+python classify_environment.py 24.4519 122.9440
+
+# Output: 🏙️ URBAN (Confidence: 100%)
+# Reasoning: Very high POI density: 205.6 POIs/km²
+
+# Suburban area (moderate density)
+python classify_environment.py 24.465 122.956 0.5
+
+# Output: 🏘️ SUBURBAN (Confidence: 70%)
+# Reasoning: Moderate POI density: 52.2 POIs/km²
+
+# Rural area (low density)
+python classify_environment.py 24.35 122.85
+
+# Output: 🌾 RURAL (Confidence: 80%)
+# Reasoning: Very low POI density
+```
+
+### Classification Criteria
+
+| Environment | POI Density | Key Characteristics |
+|-------------|-------------|---------------------|
+| **Urban** | >100 POIs/km² | High commercial activity, diverse POI types, dense infrastructure |
+| **Suburban** | 20-100 POIs/km² | Mixed residential/commercial, moderate density, balanced categories |
+| **Rural** | <20 POIs/km² | Low density, agricultural landuse, dominated by infrastructure |
+
+### Output Information
+
+The classifier provides:
+- **Environment Type**: Urban, Suburban, or Rural
+- **Confidence Score**: 0-100% based on clarity of indicators
+- **Reasoning**: Detailed explanation of classification factors
+- **Area Statistics**: POI counts, density, category distribution
+- **Nearest POIs**: List of closest points of interest
 
 ## Development
 
